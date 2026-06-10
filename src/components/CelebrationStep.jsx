@@ -1,8 +1,16 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Award, Clock, Download, Heart } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Award, Clock, Download, Heart } from "lucide-react";
 
-export default function CelebrationStep({ countdown, selectedDate, selectedTime, selectedMeal, getMealEmoji, getMealTitle, handleDownloadCertificate }) {
+export default function CelebrationStep({
+  countdown,
+  selectedDate,
+  selectedTime,
+  selectedMeal,
+  getMealEmoji,
+  getMealTitle,
+  handleDownloadCertificate,
+}) {
   return (
     <motion.div
       key="step4"
@@ -33,22 +41,30 @@ export default function CelebrationStep({ countdown, selectedDate, selectedTime,
           </span>
           <div className="flex gap-3 text-center">
             <div>
-              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.days}</span>
+              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
+                {countdown.days}
+              </span>
               <span className="text-[9px] block text-gray-500">დღეები</span>
             </div>
             <span className="font-bold text-gray-400">:</span>
             <div>
-              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.hours.toString().padStart(2, '0')}</span>
+              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
+                {countdown.hours.toString().padStart(2, "0")}
+              </span>
               <span className="text-[9px] block text-gray-500">სთ</span>
             </div>
             <span className="font-bold text-gray-400">:</span>
             <div>
-              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.minutes.toString().padStart(2, '0')}</span>
+              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
+                {countdown.minutes.toString().padStart(2, "0")}
+              </span>
               <span className="text-[9px] block text-gray-500">წთ</span>
             </div>
             <span className="font-bold text-gray-400">:</span>
             <div>
-              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.seconds.toString().padStart(2, '0')}</span>
+              <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
+                {countdown.seconds.toString().padStart(2, "0")}
+              </span>
               <span className="text-[9px] block text-gray-500">წმ</span>
             </div>
           </div>
@@ -65,24 +81,48 @@ export default function CelebrationStep({ countdown, selectedDate, selectedTime,
           <div className="flex items-center gap-3 py-1.5 px-3 rounded-xl bg-white/40 dark:bg-gray-950/30 border border-gray-100 dark:border-gray-900">
             <CalendarIcon />
             <div>
-              <span className="text-[10px] text-gray-500 block font-medium">თარიღი</span>
-              <span className="text-xs font-bold text-gray-800 dark:text-gray-200">{selectedDate ? selectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}</span>
+              <span className="text-[10px] text-gray-500 block font-medium">
+                თარიღი
+              </span>
+              <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                {selectedDate
+                  ? selectedDate.toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : "TBD"}
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3 py-1.5 px-3 rounded-xl bg-white/40 dark:bg-gray-950/30 border border-gray-100 dark:border-gray-900">
             <Clock size={18} className="text-rose-500 shrink-0" />
             <div>
-              <span className="text-[10px] text-gray-500 block font-medium">დრო</span>
-              <span className="text-xs font-bold text-gray-800 dark:text-gray-200">{selectedTime || 'საღამო'}</span>
+              <span className="text-[10px] text-gray-500 block font-medium">
+                დრო
+              </span>
+              <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                {selectedTime || "საღამო"}
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3 py-1.5 px-3 rounded-xl bg-white/40 dark:bg-gray-950/30 border border-gray-100 dark:border-gray-900">
-            <span className="text-xl shrink-0">{getMealEmoji(selectedMeal)}</span>
+            <span className="text-xl shrink-0">
+              {getMealEmoji(selectedMeal)}
+            </span>
             <div>
-              <span className="text-[10px] text-gray-500 block font-medium">არჩევანი</span>
-              <span className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate max-w-[90px]">{selectedMeal === 'custom' ? (typeof selectedMeal === 'string' ? selectedMeal : 'Custom') : getMealTitle(selectedMeal)}</span>
+              <span className="text-[10px] text-gray-500 block font-medium">
+                არჩევანი
+              </span>
+              <span className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate max-w-[90px]">
+                {selectedMeal === "custom"
+                  ? typeof selectedMeal === "string"
+                    ? selectedMeal
+                    : "Custom"
+                  : getMealTitle(selectedMeal)}
+              </span>
             </div>
           </div>
         </div>
@@ -98,7 +138,11 @@ export default function CelebrationStep({ countdown, selectedDate, selectedTime,
         </button>
       </div>
 
-      <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }} className="mt-8 text-rose-500 font-serif font-extrabold text-lg block tracking-wide">
+      <motion.div
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        className="mt-8 text-rose-500 font-serif font-extrabold text-lg block tracking-wide"
+      >
         აღარ მღერია ❤️
       </motion.div>
     </motion.div>
@@ -107,9 +151,30 @@ export default function CelebrationStep({ countdown, selectedDate, selectedTime,
 
 function CalendarIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-rose-500 shrink-0">
-      <path d="M7 11H9" stroke="#BE123C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="3" y="4" width="18" height="16" rx="2" stroke="#BE123C" strokeWidth="1.5" />
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="text-rose-500 shrink-0"
+    >
+      <path
+        d="M7 11H9"
+        stroke="#BE123C"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <rect
+        x="3"
+        y="4"
+        width="18"
+        height="16"
+        rx="2"
+        stroke="#BE123C"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }

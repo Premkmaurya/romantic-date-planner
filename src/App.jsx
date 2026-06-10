@@ -439,17 +439,17 @@ export default function App() {
   // --- Generate SVG Certificate and Download ---
   const handleDownloadCertificate = () => {
     audio.playClick();
-    const finalName = name || "Special Guest";
-    const timeStr = selectedTime ? selectedTime : "Evening";
+    const finalName = name || "ულამაზესი";
+    const timeStr = selectedTime ? selectedTime : "საღამო";
 
-    let mealStr = "Special Date Meal";
-    if (selectedMeal === "pizza") mealStr = "Pizza 🍕";
-    else if (selectedMeal === "burger") mealStr = "Burgers 🍔";
-    else if (selectedMeal === "pasta") mealStr = "Pasta 🍝";
-    else if (selectedMeal === "sushi") mealStr = "Sushi 🍣";
-    else if (selectedMeal === "dessert") mealStr = "Coffee & Desserts ☕🍰";
+    let mealStr = "განსაკუთრებული კვება";
+    if (selectedMeal === "pizza") mealStr = "პიცა 🍕";
+    else if (selectedMeal === "burger") mealStr = "ბურგერი 🍔";
+    else if (selectedMeal === "pasta") mealStr = "პასტა 🍝";
+    else if (selectedMeal === "sushi") mealStr = "სუში 🍣";
+    else if (selectedMeal === "dessert") mealStr = "ყავა და დესერტი ☕🍰";
     else if (selectedMeal === "custom")
-      mealStr = customMealText || "Custom Selection";
+      mealStr = customMealText || "საკუთარი არჩევანი";
 
     const svgContent = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
@@ -476,32 +476,32 @@ export default function App() {
         <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(100, 1180)" />
         <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(1680, 1180)" />
 
-        <text x="400" y="110" font-family="'Playfair Display', serif" font-weight="bold" font-size="32" fill="#be123c" text-anchor="middle">Official Date Invitation</text>
+        <text x="400" y="110" font-family="'Playfair Display', serif" font-weight="bold" font-size="28" fill="#be123c" text-anchor="middle">პაემნის ოფიციალური მოწვევა</text>
         <line x1="300" y1="130" x2="500" y2="130" stroke="url(#accentGrad)" stroke-width="2" />
         
         <path d="M 400 210 C 400 190, 420 170, 440 170 C 460 170, 475 185, 475 205 C 475 225, 455 245, 400 280 C 345 245, 325 225, 325 205 C 325 185, 340 170, 360 170 C 380 170, 400 190, 400 210 Z" fill="url(#accentGrad)" filter="url(#shadow)" />
         <text x="400" y="222" font-family="'Outfit', sans-serif" font-weight="bold" font-size="28" fill="white" text-anchor="middle">✓</text>
 
-        <text x="400" y="325" font-family="'Outfit', sans-serif" font-size="18" fill="#4b5563" text-anchor="middle">This certifies that the beautiful</text>
+        <text x="400" y="325" font-family="'Outfit', sans-serif" font-size="18" fill="#4b5563" text-anchor="middle">ეს ადასტურებს, რომ ულამაზესი</text>
         <text x="400" y="365" font-family="'Playfair Display', serif" font-weight="bold" font-size="34" fill="#e11d48" text-anchor="middle">${finalName}</text>
-        <text x="400" y="405" font-family="'Outfit', sans-serif" font-size="18" fill="#4b5563" text-anchor="middle">has officially agreed to accompany me on a special date.</text>
+        <text x="400" y="405" font-family="'Outfit', sans-serif" font-size="16" fill="#4b5563" text-anchor="middle">ოფიციალურად დათანხმდა წამოსულიყო განსაკუთრებულ პაემანზე.</text>
 
         <rect x="150" y="440" width="500" height="80" rx="15" fill="#fff1f2" stroke="#fecdd3" stroke-width="1" />
         
-        <text x="230" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">DATE</text>
-        <text x="230" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${selectedDate ? selectedDate.toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "TBD"}</text>
+        <text x="230" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">თარიღი</text>
+        <text x="230" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${selectedDate ? selectedDate.toLocaleDateString("ka-GE", { month: "short", day: "numeric" }) : "გასარკვევია"}</text>
 
-        <text x="400" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">TIME</text>
+        <text x="400" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">დრო</text>
         <text x="400" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${timeStr}</text>
 
-        <text x="570" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">MEAL</text>
-        <text x="570" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${mealStr.replace(/[^\w\s\&\,\.\-\:\/]/g, "").trim() || "Food"}</text>
+        <text x="570" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">მენიუ</text>
+        <text x="570" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${mealStr.replace(/[^\w\s\&\,\.\-\:\/]/g, "").trim() || "კვება"}</text>
 
         <line x1="150" y1="560" x2="300" y2="560" stroke="#d1d5db" stroke-width="1" />
-        <text x="225" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">Signature of Proposal Maker</text>
+        <text x="225" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">მომწვევის ხელმოწერა</text>
         
         <line x1="500" y1="560" x2="650" y2="560" stroke="#d1d5db" stroke-width="1" />
-        <text x="575" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">Signature of ${finalName}</text>
+        <text x="575" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">${finalName}-ის ხელმოწერა</text>
       </svg>
     `;
 
