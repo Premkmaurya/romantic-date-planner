@@ -1,0 +1,965 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
+import { audio } from './utils/AudioSystem';
+import BackgroundParticles from './components/BackgroundParticles';
+import HeartCursorTrail from './components/HeartCursorTrail';
+
+import HeaderActions from './components/HeaderActions';
+import NameEntry from './components/NameEntry';
+import ProposalStep from './components/ProposalStep';
+import DateStep from './components/DateStep';
+import MealStep from './components/MealStep';
+import CelebrationStep from './components/CelebrationStep';
+
+
+export default function App() {
+  // --- Personalized Name Loading ---
+  const [name, setName] = useState(() => {
+    const queryName = new URLSearchParams(window.location.search).get('name');
+    if (queryName) return queryName;
+    return localStorage.getItem('proposal_name') || '';
+  });
+
+  // --- Step Loading ---
+  const [step, setStep] = useState(() => {
+    const savedStep = localStorage.getItem('proposal_step');
+    const queryName = new URLSearchParams(window.location.search).get('name');
+    if (queryName) return 1; // Always start at proposal if customized URL is loaded
+    if (savedStep) return parseInt(savedStep, 10);
+    return name ? 1 : 0;
+  });
+
+  // --- Form & Selections State ---
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const saved = localStorage.getItem('proposal_date');
+    return saved ? new Date(saved) : null;
+  });
+  const [selectedTime, setSelectedTime] = useState(() => {
+    return localStorage.getItem('proposal_time') || '';
+  });
+  const [selectedMeal, setSelectedMeal] = useState(() => {
+    return localStorage.getItem('proposal_meal') || '';
+  });
+  const [customMealText, setCustomMealText] = useState(() => {
+    return localStorage.getItem('proposal_custom_meal') || '';
+  });
+
+  // --- UI & Controls State ---
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('proposal_theme') || 'dark';
+  });
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  
+  const [enteredName, setEnteredName] = useState('');
+  
+  // --- Fleeing No Button State ---
+  const [noBtnPos, setNoBtnPos] = useState({ x: 0, y: 0 });
+  const [isNoBtnMoved, setIsNoBtnMoved] = useState(false);
+  const [tooltipText, setTooltipText] = useState('No 😅');
+  const noBtnRef = useRef(null);
+  const originRef = useRef(null);
+
+  const tooltips = [
+    "ნამდვილად გინდა? 😏",
+    "ცადე თავიდან 😆",
+    "არა ასე სწრაფად ❤️",
+    "მგონი 'კი' იგულისხმე 😄",
+    "არა არჩევანი არ არის! 😜",
+    "გიაზრე კარგად... 🥺",
+    "შეცდომა: პარამეტრი გამორთულია! 🚫",
+    "სწორედ დააჭირე 'კი'! 💖",
+    "კარგი მცდელობა! 😂",
+    "აჰ, მომხსნა! 🏃‍♂️"
+  ];
+
+  // --- Countdown Timer State ---
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: false });
+
+  // --- Sync State to LocalStorage ---
+  useEffect(() => {
+    localStorage.setItem('proposal_name', name);
+    localStorage.setItem('proposal_step', step.toString());
+    if (selectedDate) localStorage.setItem('proposal_date', selectedDate.toISOString());
+    localStorage.setItem('proposal_time', selectedTime);
+    localStorage.setItem('proposal_meal', selectedMeal);
+    localStorage.setItem('proposal_custom_meal', customMealText);
+  }, [name, step, selectedDate, selectedTime, selectedMeal, customMealText]);
+
+  // --- Apply Theme Class ---
+  useEffect(() => {
+    localStorage.setItem('proposal_theme', theme);
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
+  // --- Celebrate Loop for Celebration Screen (Step 4) ---
+  useEffect(() => {
+    let interval;
+    if (step === 4) {
+      // Trigger instant big confetti burst
+      audio.playSuccess();
+      const end = Date.now() + 1000;
+      
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      // Continuous floating confetti
+      interval = setInterval(() => {
+        if (Date.now() > end) {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: ['#f43f5e', '#ec4899', '#d946ef']
+          });
+          confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: ['#f43f5e', '#ec4899', '#d946ef']
+          });
+        }
+      }, 250);
+    }
+    return () => clearInterval(interval);
+  }, [step]);
+
+  // --- Countdown Calculator ---
+  useEffect(() => {
+    if (step !== 4 || !selectedDate) return;
+
+    const updateCountdown = () => {
+      // Combine date and time
+      const target = new Date(selectedDate);
+      if (selectedTime) {
+        const [hours, minutes] = selectedTime.split(':').map(Number);
+        target.setHours(hours, minutes, 0, 0);
+      } else {
+        target.setHours(19, 0, 0, 0); // Default to 7 PM
+      }
+
+      const diff = target.getTime() - Date.now();
+      
+      if (diff <= 0) {
+        setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true });
+      } else {
+        setCountdown({
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((diff / (1000 * 60)) % 60),
+          seconds: Math.floor((diff / 1000) % 60),
+          isPast: false
+        });
+      }
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [step, selectedDate, selectedTime]);
+
+  // --- Audio Functions ---
+  const handleMusicToggle = () => {
+    if (musicPlaying) {
+      audio.stopMusic();
+      setMusicPlaying(false);
+    } else {
+      audio.startMusic();
+      setMusicPlaying(true);
+    }
+  };
+
+  const handleBtnClick = () => {
+    audio.playClick();
+  };
+
+  // --- Reset App State (For testing or starting over) ---
+  const handleReset = () => {
+    if (window.confirm("Do you want to reset the date details?")) {
+      audio.playClick();
+      localStorage.removeItem('proposal_name');
+      localStorage.removeItem('proposal_step');
+      localStorage.removeItem('proposal_date');
+      localStorage.removeItem('proposal_time');
+      localStorage.removeItem('proposal_meal');
+      localStorage.removeItem('proposal_custom_meal');
+      setName('');
+      setSelectedDate(null);
+      setSelectedTime('');
+      setSelectedMeal('');
+      setCustomMealText('');
+      setIsNoBtnMoved(false);
+      setNoBtnPos({ x: 0, y: 0 });
+      setTooltipText('No 😅');
+      
+      // Clean query params
+      const url = new URL(window.location.href);
+      url.search = '';
+      window.history.replaceState({}, document.title, url.toString());
+
+      setStep(0);
+    }
+  };
+
+  // --- Fleeing No Button Logic ---
+  const handleNoButtonEscape = (e) => {
+    audio.playNoHover();
+
+    // Get viewport limits
+    const btnWidth = noBtnRef.current ? noBtnRef.current.offsetWidth : 120;
+    const btnHeight = noBtnRef.current ? noBtnRef.current.offsetHeight : 45;
+
+    // Define card's approximate centered overlap box to avoid jumping on top of the card
+    const cardWidth = 440;
+    const cardHeight = 400;
+    const cardMinX = window.innerWidth / 2 - cardWidth / 2;
+    const cardMaxX = window.innerWidth / 2 + cardWidth / 2;
+    const cardMinY = window.innerHeight / 2 - cardHeight / 2;
+    const cardMaxY = window.innerHeight / 2 + cardHeight / 2;
+
+    // Initially standard flow has position relative to parent.
+    if (!isNoBtnMoved) {
+      setIsNoBtnMoved(true);
+    }
+
+    // Set origin coordinates on the first move
+    if (!originRef.current && noBtnRef.current) {
+      const rect = noBtnRef.current.getBoundingClientRect();
+      originRef.current = { x: rect.left, y: rect.top };
+    }
+
+    // Starting origin coordinates (where the button is rendered in the flow)
+    const originX = originRef.current ? originRef.current.x : (window.innerWidth / 2 + 60); 
+    const originY = originRef.current ? originRef.current.y : (window.innerHeight / 2 + 80); 
+
+    const currentX = noBtnPos.x;
+    const currentY = noBtnPos.y;
+
+    let nextX = currentX;
+    let nextY = currentY;
+    let isValid = false;
+    let attempts = 0;
+
+    // Shift a little bit from its position (delta step)
+    while (!isValid && attempts < 30) {
+      const step = Math.random() * 70 + 100; // 100px to 170px shift delta
+      const angle = Math.random() * 2 * Math.PI;
+      const dx = Math.cos(angle) * step;
+      const dy = Math.sin(angle) * step;
+
+      const candX = currentX + dx;
+      const candY = currentY + dy;
+
+      const absX = originX + candX;
+      const absY = originY + candY;
+
+      // Check if candidate position is inside the viewport with a margin
+      const inViewport = (
+        absX >= 30 &&
+        absX <= window.innerWidth - btnWidth - 30 &&
+        absY >= 30 &&
+        absY <= window.innerHeight - btnHeight - 30
+      );
+
+      // Check if candidate overlaps the central card
+      const overlapsCard = (
+        absX > cardMinX - 10 && 
+        absX < cardMaxX + 10 && 
+        absY > cardMinY - 10 && 
+        absY < cardMaxY + 10
+      );
+
+      if (inViewport && !overlapsCard) {
+        nextX = candX;
+        nextY = candY;
+        isValid = true;
+      }
+      attempts++;
+    }
+
+    // Fallback: if cornered, try moving but ignore card overlap to allow escape
+    if (!isValid) {
+      attempts = 0;
+      while (!isValid && attempts < 20) {
+        const step = Math.random() * 50 + 80;
+        const angle = Math.random() * 2 * Math.PI;
+        const dx = Math.cos(angle) * step;
+        const dy = Math.sin(angle) * step;
+
+        const candX = currentX + dx;
+        const candY = currentY + dy;
+
+        const absX = originX + candX;
+        const absY = originY + candY;
+
+        const inViewport = (
+          absX >= 30 &&
+          absX <= window.innerWidth - btnWidth - 30 &&
+          absY >= 30 &&
+          absY <= window.innerHeight - btnHeight - 30
+        );
+
+        if (inViewport) {
+          nextX = candX;
+          nextY = candY;
+          isValid = true;
+        }
+        attempts++;
+      }
+    }
+
+    // Double fallback: if still not valid, jump to a random position
+    if (!isValid) {
+      const randX = Math.random() * (window.innerWidth - btnWidth - 60) + 30;
+      const randY = Math.random() * (window.innerHeight - btnHeight - 60) + 30;
+      nextX = randX - originX;
+      nextY = randY - originY;
+    }
+
+    setNoBtnPos({ x: nextX, y: nextY });
+
+    // Pick a random funny tooltip message
+    const randomIndex = Math.floor(Math.random() * tooltips.length);
+    setTooltipText(tooltips[randomIndex]);
+  };
+
+  // --- Step 0: Name Submissions ---
+  const handleNameSubmit = (e) => {
+    e.preventDefault();
+    if (!enteredName.trim()) return;
+    audio.playClick();
+    setName(enteredName.trim());
+    setStep(1);
+  };
+
+  // --- Step 1: Proposal Yes Click ---
+  const handleProposalAccept = () => {
+    audio.playSuccess();
+    // Tiny confetti burst
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.6 }
+    });
+    setStep(2);
+  };
+
+  // --- Step 2: Date Selection Validation & Submit ---
+  const handleDateContinue = () => {
+    if (!selectedDate || !selectedTime) return;
+    audio.playClick();
+    setStep(3);
+  };
+
+  // --- Step 3: Meal Selection Validation & Submit ---
+  const handleMealContinue = () => {
+    if (!selectedMeal) return;
+    if (selectedMeal === 'custom' && !customMealText.trim()) return;
+    audio.playClick();
+    setStep(4);
+  };
+
+  
+
+  // --- Generate SVG Certificate and Download ---
+  const handleDownloadCertificate = () => {
+    audio.playClick();
+    const finalName = name || 'Special Guest';
+    const dateStr = selectedDate ? selectedDate.toLocaleDateString(undefined, {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    }) : 'To Be Decided';
+    const timeStr = selectedTime ? selectedTime : 'Evening';
+    
+    let mealStr = 'Special Date Meal';
+    if (selectedMeal === 'pizza') mealStr = 'Pizza 🍕';
+    else if (selectedMeal === 'burger') mealStr = 'Burgers 🍔';
+    else if (selectedMeal === 'pasta') mealStr = 'Pasta 🍝';
+    else if (selectedMeal === 'sushi') mealStr = 'Sushi 🍣';
+    else if (selectedMeal === 'dessert') mealStr = 'Coffee & Desserts ☕🍰';
+    else if (selectedMeal === 'custom') mealStr = customMealText || 'Custom Selection';
+
+    // SVG graphics markup for the invitation card
+    const svgContent = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+        <!-- Background Gradients -->
+        <defs>
+          <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fff5f6" />
+            <stop offset="100%" stop-color="#fae8ff" />
+          </linearGradient>
+          <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f43f5e" />
+            <stop offset="100%" stop-color="#ec4899" />
+          </linearGradient>
+          <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+            <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#f43f5e" flood-opacity="0.1" />
+          </filter>
+        </defs>
+
+        <!-- Main Card Border & Background -->
+        <rect width="800" height="600" rx="30" fill="url(#bgGlow)" />
+        <rect x="25" y="25" width="750" height="550" rx="20" fill="none" stroke="url(#accentGrad)" stroke-width="4" stroke-dasharray="10 5" opacity="0.4" />
+        <rect x="35" y="35" width="730" height="530" rx="16" fill="white" opacity="0.6" filter="url(#shadow)" />
+
+        <!-- Romantic Corner Decorations -->
+        <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(100, 100)" />
+        <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(1680, 100)" />
+        <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(100, 1180)" />
+        <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(1680, 1180)" />
+
+        <!-- Header -->
+        <text x="400" y="110" font-family="'Playfair Display', serif" font-weight="bold" font-size="32" fill="#be123c" text-anchor="middle">Official Date Invitation</text>
+        <line x1="300" y1="130" x2="500" y2="130" stroke="url(#accentGrad)" stroke-width="2" />
+        
+        <!-- Big Heart Seal -->
+        <path d="M 400 210 C 400 190, 420 170, 440 170 C 460 170, 475 185, 475 205 C 475 225, 455 245, 400 280 C 345 245, 325 225, 325 205 C 325 185, 340 170, 360 170 C 380 170, 400 190, 400 210 Z" fill="url(#accentGrad)" filter="url(#shadow)" />
+        <text x="400" y="222" font-family="'Outfit', sans-serif" font-weight="bold" font-size="28" fill="white" text-anchor="middle">✓</text>
+
+        <!-- Body -->
+        <text x="400" y="325" font-family="'Outfit', sans-serif" font-size="18" fill="#4b5563" text-anchor="middle">This certifies that the beautiful</text>
+        <text x="400" y="365" font-family="'Playfair Display', serif" font-weight="bold" font-size="34" fill="#e11d48" text-anchor="middle">${finalName}</text>
+        <text x="400" y="405" font-family="'Outfit', sans-serif" font-size="18" fill="#4b5563" text-anchor="middle">has officially agreed to accompany me on a special date.</text>
+
+        <!-- Details Grid -->
+        <rect x="150" y="440" width="500" height="80" rx="15" fill="#fff1f2" stroke="#fecdd3" stroke-width="1" />
+        
+        <text x="230" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">DATE</text>
+        <text x="230" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${selectedDate ? selectedDate.toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) : 'TBD'}</text>
+
+        <text x="400" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">TIME</text>
+        <text x="400" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${timeStr}</text>
+
+        <text x="570" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">MEAL</text>
+        <text x="570" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${mealStr.replace(/[^\w\s\&\,\.\-\:\/]/g, '').trim() || 'Food'}</text>
+
+        <!-- Signatures -->
+        <line x1="150" y1="560" x2="300" y2="560" stroke="#d1d5db" stroke-width="1" />
+        <text x="225" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">Signature of Proposal Maker</text>
+        
+        <line x1="500" y1="560" x2="650" y2="560" stroke="#d1d5db" stroke-width="1" />
+        <text x="575" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">Signature of ${finalName}</text>
+      </svg>
+    `;
+
+    const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `date_invitation_${finalName.toLowerCase().replace(/\s+/g, '_')}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // --- Display Meal Icon based on type ---
+  const getMealEmoji = (type) => {
+    switch (type) {
+      case 'pizza': return '🍕';
+      case 'burger': return '🍔';
+      case 'pasta': return '🍝';
+      case 'sushi': return '🍣';
+      case 'dessert': return '☕🍰';
+      default: return '🍽️';
+    }
+  };
+
+  const getMealTitle = (type) => {
+    switch (type) {
+      case 'pizza': return 'Pizza Date';
+      case 'burger': return 'Burger Joint';
+      case 'pasta': return 'Fancy Italian';
+      case 'sushi': return 'Sushi Bar';
+      case 'dessert': return 'Coffee & Dessert';
+      case 'custom': return 'Something Else';
+      default: return 'Gourmet meal';
+    }
+  };
+
+  return (
+    <div className="min-h-screen radial-bg text-gray-800 dark:text-gray-100 flex flex-col justify-between relative overflow-hidden transition-colors duration-500 font-sans">
+      <BackgroundParticles />
+      <HeartCursorTrail />
+
+      {/* --- FLOATING HEADER ACTIONS --- */}
+      <header className="w-full px-6 py-4 flex justify-between items-center z-20">
+        <div className="flex items-center gap-2 text-rose-500 font-serif font-bold text-xl">
+          <Heart className="fill-rose-500 animate-pulse" size={22} />
+          <span>რომანტიკული წინადადება</span>
+        </div>
+
+        {/* Music and Theme togglers */}
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={handleMusicToggle}
+            className={`p-2.5 rounded-full glass-card transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/50 flex items-center justify-center ${
+              musicPlaying ? 'bg-rose-500/10 text-rose-500 border-rose-500/30' : 'text-gray-600 dark:text-gray-400'
+            }`}
+            title={musicPlaying ? "ფონის მუსიკის გამორთვა" : "ფონის მუსიკის ჩართვა"}
+            aria-label="ფონის მუსიკის ჩართვა/გამორთვა"
+          >
+            {musicPlaying ? (
+              <span className="relative flex h-5 w-5 items-center justify-center">
+                <Volume2 size={18} className="z-10" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-40"></span>
+              </span>
+            ) : (
+              <VolumeX size={18} />
+            )}
+          </button>
+
+          <button
+            onClick={() => { handleBtnClick(); setTheme(theme === 'dark' ? 'light' : 'dark'); }}
+            className="p-2.5 rounded-full glass-card text-gray-600 dark:text-gray-400 hover:text-rose-500 hover:bg-rose-500/5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/50"
+            title={theme === 'dark' ? 'გადართვა ნათელ რეჟიმზე' : 'გადართვა ბნელ რეჟიმზე'}
+            aria-label="ბნელი/საშუალო რეჟიმის გადართვა"
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+        </div>
+      </header>
+
+      {/* --- MAIN INTERACTIVE GLASS CARD --- */}
+      <main className="flex-grow flex items-center justify-center p-4 z-10">
+        <AnimatePresence mode="wait">
+          {/* STEP 0: ONBOARDING / NAME ENTRY */}
+          {step === 0 && (
+            <motion.div
+              key="step0"
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+              className="w-full max-w-md glass-card rounded-3xl p-8 text-center relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-500 to-purple-500" />
+              
+              <div className="mx-auto w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-950/40 flex items-center justify-center mb-6">
+                <User className="text-rose-500" size={30} />
+              </div>
+
+              <h1 className="text-3xl font-bold font-serif text-gray-900 dark:text-white mb-2 leading-tight">
+                შექმენით შეხვედრის წინადადება
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 max-w-sm mx-auto">
+                მორგეთ ეს ინტერაქტიული მიწვევა ვინმესთვის ან ჩაწერეთ სახელი გასინჯავად
+              </p>
+
+              <form onSubmit={handleNameSubmit} className="space-y-5">
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-rose-400">
+                    <Heart size={18} className="fill-current" />
+                  </span>
+                  <input
+                    type="text"
+                    required
+                    value={enteredName}
+                    onChange={(e) => setEnteredName(e.target.value)}
+                    placeholder="მისი სახელი (მაგ., ჯულიეტა)"
+                    className="w-full py-3.5 pl-11 pr-4 rounded-xl text-base glass-input text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+                    aria-label="სახელის შეყვანა"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-md hover:shadow-lg shadow-rose-500/20 active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
+                >
+                  <span>დაიწყე წინადადება</span>
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </form>
+            </motion.div>
+          )}
+
+          {/* STEP 1: THE PROPOSAL SCREEN */}
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+              className="w-full max-w-md glass-card rounded-3xl p-8 text-center relative"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-500 to-purple-500 rounded-t-3xl" />
+              
+              <motion.div 
+                animate={{ scale: [1, 1.05, 1] }} 
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="mx-auto w-20 h-20 rounded-full bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center mb-6 border border-rose-100/50 dark:border-rose-950/40"
+              >
+                <Heart className="text-rose-500 fill-rose-500" size={42} />
+              </motion.div>
+
+              <h1 className="text-3xl sm:text-4xl font-extrabold font-serif text-gray-900 dark:text-white mb-3 tracking-wide leading-tight">
+                მოხვალ ჩემთან შეხვედრაზე{name ? `, ${name}` : ''}? ❤️
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 font-medium mb-8">
+                მე გვაქვს ჩვენთვის რაღაც განსაკუთრებული დაგეგმილი.
+              </p>
+
+              {/* Action Buttons Grid */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative min-h-[60px]">
+                <button
+                  onClick={handleProposalAccept}
+                  className="w-full sm:w-auto px-10 py-4 rounded-full font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg shadow-rose-500/20 hover:shadow-xl active:scale-[0.98] hover:scale-[1.03] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
+                >
+                  <Heart size={18} className="fill-current group-hover:scale-125 transition-transform" />
+                  <span>კი ❤️</span>
+                </button>
+
+                {/* ESCAPING NO BUTTON */}
+                <motion.button
+                  ref={noBtnRef}
+                  onMouseEnter={handleNoButtonEscape}
+                  onFocus={handleNoButtonEscape}
+                  onTouchStart={(e) => { e.preventDefault(); handleNoButtonEscape(e); }}
+                  animate={isNoBtnMoved ? { x: noBtnPos.x, y: noBtnPos.y } : { x: 0, y: 0 }}
+                  transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                  className={`w-full sm:w-auto px-10 py-4 rounded-full font-bold transition-all duration-300 border focus:outline-none ${
+                    isNoBtnMoved 
+                    ? 'fixed z-50 bg-white/90 dark:bg-gray-900/90 text-rose-500 border-rose-400/40 shadow-xl backdrop-blur-md px-6 py-2.5 text-sm'
+                    : 'bg-transparent text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-base'
+                  }`}
+                  style={{
+                    touchAction: 'none',
+                  }}
+                >
+                  {isNoBtnMoved ? tooltipText : "არა 😅"}
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STEP 2: DATE & TIME SELECTION */}
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+              className="w-full max-w-md glass-card rounded-3xl p-7 text-center relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-500 to-purple-500" />
+              
+              <div className="mx-auto w-14 h-14 rounded-full bg-rose-100 dark:bg-rose-950/40 flex items-center justify-center mb-4">
+                <Calendar className="text-rose-500" size={24} />
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl font-bold font-serif text-gray-900 dark:text-white mb-2 leading-tight">
+                იეი! დავგეგმოთ ჩვენი შეხვედრა ❤️
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                აირჩიეთ თქვენთვის ყველაზე შემაფების დღე და დრო.
+              </p>
+
+              <div className="space-y-5 text-left">
+                {/* Custom Datepicker Calendar */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5 pl-1">
+                    <Calendar size={16} className="text-rose-500" />
+                    <span>აირჩიეთ დღე</span>
+                  </label>
+                  <div className="relative w-full flex justify-center">
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={(date) => { handleBtnClick(); setSelectedDate(date); }}
+                      minDate={new Date()}
+                      inline
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Quick Time Slots & Time Input */}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5 pl-1">
+                    <Clock size={16} className="text-rose-500" />
+                    <span>აირჩიეთ დრო</span>
+                  </label>
+                  
+                  {/* Grid of predefined romantic slots */}
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                      {[
+                      { time: '11:30', label: 'ბრანჩი 🥐' },
+                      { time: '14:00', label: 'ყავა და გამშვიდება ☕' },
+                      { time: '18:00', label: 'საეზრო სეირნობა 🌅' },
+                      { time: '19:30', label: 'სანთლების ვახშამი 🕯️' },
+                    ].map((slot) => (
+                      <button
+                        key={slot.time}
+                        type="button"
+                        onClick={() => { handleBtnClick(); setSelectedTime(slot.time); }}
+                        className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all cursor-pointer ${
+                          selectedTime === slot.time
+                          ? 'bg-rose-500 text-white border-rose-500 shadow-md shadow-rose-500/25'
+                          : 'bg-white/50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-800 hover:border-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/10 text-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        {slot.label} ({slot.time})
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Standard Time Input wrapper */}
+                  <div className="relative">
+                      <input
+                      type="time"
+                      value={selectedTime}
+                      onChange={(e) => setSelectedTime(e.target.value)}
+                      className="w-full py-3 px-4 rounded-xl text-sm glass-input text-gray-900 dark:text-white font-medium"
+                      aria-label="საათისა და თარიღის არჩევა"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Continue Button */}
+                <button
+                onClick={handleDateContinue}
+                disabled={!selectedDate || !selectedTime}
+                className="w-full mt-7 py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-md hover:shadow-lg shadow-rose-500/20 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-800 dark:disabled:to-gray-950 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
+              >
+                <span>გაგრძელება</span>
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
+          )}
+
+          {/* STEP 3: MEAL SELECTION */}
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+              className="w-full max-w-lg glass-card rounded-3xl p-7 text-center relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-500 to-purple-500" />
+              
+              <div className="mx-auto w-14 h-14 rounded-full bg-rose-100 dark:bg-rose-950/40 flex items-center justify-center mb-4">
+                <ChefHat className="text-rose-500" size={24} />
+              </div>
+
+                <h1 className="text-2xl sm:text-3xl font-bold font-serif text-gray-900 dark:text-white mb-2 leading-tight">
+                რას ვაჭმევთ? 🍽️
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                აირჩიეთ თქვენი საყვარელი სასადილო სტილი ჩვენი შეხვედრისთვის.
+              </p>
+
+              <div className="grid grid-cols-2 gap-3.5 text-left mb-5">
+                {[
+                  { id: 'pizza', icon: '🍕', desc: 'საფირმო პიცა' },
+                  { id: 'burger', icon: '🍔', desc: 'მყუდრო კლასიკა' },
+                  { id: 'pasta', icon: '🍝', desc: 'ელეგანტური იტალიური' },
+                  { id: 'sushi', icon: '🍣', desc: 'სუფთა და პრემიუმ' },
+                  { id: 'dessert', icon: '☕🍰', desc: 'ტკბილი სიამოვნება' },
+                  { id: 'custom', icon: '❓', desc: 'საკუთარი არჩევანი' }
+                ].map((item) => (
+                  <motion.button
+                    key={item.id}
+                    type="button"
+                    whileHover={{ scale: 1.025, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => { handleBtnClick(); setSelectedMeal(item.id); }}
+                    className={`p-4 rounded-2xl border text-left flex flex-col justify-between h-28 relative overflow-hidden transition-all cursor-pointer ${
+                      selectedMeal === item.id
+                      ? 'bg-rose-500/10 dark:bg-rose-500/15 border-rose-500 ring-2 ring-rose-500/25'
+                      : 'bg-white/45 dark:bg-gray-950/15 border-gray-200 dark:border-gray-800 hover:border-rose-400 hover:bg-rose-50/20'
+                    }`}
+                  >
+                    <span className="text-3xl mb-2">{item.icon}</span>
+                    <div>
+                      <h3 className="font-bold text-sm text-gray-900 dark:text-white leading-tight">
+                        {getMealTitle(item.id)}
+                      </h3>
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                        {item.desc}
+                      </p>
+                    </div>
+
+                    {/* Active Heart Indicator in top right */}
+                    {selectedMeal === item.id && (
+                      <span className="absolute top-3 right-3 text-rose-500 animate-pulse">
+                        <Heart className="fill-current" size={14} />
+                      </span>
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Custom Meal input if custom selected */}
+              <AnimatePresence>
+                {selectedMeal === 'custom' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-6 overflow-hidden"
+                  >
+                    <input
+                      type="text"
+                      required
+                      value={customMealText}
+                      onChange={(e) => setCustomMealText(e.target.value)}
+                      placeholder="რას მოგწონთ? (მაგ., მექსიკური ტაკო 🌮)"
+                      className="w-full py-3.5 px-4 rounded-xl text-sm glass-input text-gray-900 dark:text-white font-medium"
+                      aria-label="Custom meal choice"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Continue Button */}
+                <button
+                onClick={handleMealContinue}
+                disabled={!selectedMeal || (selectedMeal === 'custom' && !customMealText.trim())}
+                className="w-full py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-md hover:shadow-lg shadow-rose-500/20 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-800 dark:disabled:to-gray-950 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
+              >
+                <span>გაგრძელება</span>
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
+          )}
+
+          {/* STEP 4: CELEBRATION SCREEN */}
+          {step === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+              className="w-full max-w-xl glass-card rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-400 via-pink-500 to-purple-500" />
+              
+              <div className="mx-auto w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-950/40 flex items-center justify-center mb-5 border border-rose-200">
+                <Award className="text-rose-500 fill-rose-500/10" size={32} />
+              </div>
+
+                <h1 className="text-3xl sm:text-4xl font-extrabold font-serif text-rose-600 dark:text-rose-400 mb-2 leading-tight">
+                🎉 გილოცავთ!
+              </h1>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                თქვენ ოფიციალურად დათანხმდით შეხვედრას ❤️
+              </h2>
+
+              {/* Countdown Timer Display */}
+              {!countdown.isPast && selectedDate && (
+                <div className="mb-6 py-3 px-4 rounded-2xl bg-rose-500/5 dark:bg-rose-900/10 border border-rose-500/10 inline-flex flex-col items-center">
+                  <span className="text-[10px] uppercase tracking-wider font-extrabold text-rose-500/80 mb-1 flex items-center gap-1">
+                    <Clock size={10} />
+                    <span>Countdown to our date</span>
+                  </span>
+                  <div className="flex gap-3 text-center">
+                    <div>
+                      <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.days}</span>
+                      <span className="text-[9px] block text-gray-500">Days</span>
+                    </div>
+                    <span className="font-bold text-gray-400">:</span>
+                    <div>
+                      <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.hours.toString().padStart(2, '0')}</span>
+                      <span className="text-[9px] block text-gray-500">Hrs</span>
+                    </div>
+                    <span className="font-bold text-gray-400">:</span>
+                    <div>
+                      <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.minutes.toString().padStart(2, '0')}</span>
+                      <span className="text-[9px] block text-gray-500">Mins</span>
+                    </div>
+                    <span className="font-bold text-gray-400">:</span>
+                    <div>
+                      <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">{countdown.seconds.toString().padStart(2, '0')}</span>
+                      <span className="text-[9px] block text-gray-500">Secs</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Summary Details Card */}
+              <div className="glass-card border border-rose-500/10 rounded-2xl p-5 mb-6 text-left space-y-4 shadow-sm bg-white/30 dark:bg-gray-950/20">
+                <h3 className="font-extrabold text-sm uppercase tracking-wide text-rose-500/90 pl-0.5 flex items-center gap-1.5">
+                  <Heart size={14} className="fill-current" />
+                  <span>თარიღის დეტალები</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                  <div className="flex items-center gap-3 py-1.5 px-3 rounded-xl bg-white/40 dark:bg-gray-950/30 border border-gray-100 dark:border-gray-900">
+                    <Calendar size={18} className="text-rose-500 shrink-0" />
+                    <div>
+                      <span className="text-[10px] text-gray-500 block font-medium">თარიღი</span>
+                      <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                        {selectedDate ? selectedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 py-1.5 px-3 rounded-xl bg-white/40 dark:bg-gray-950/30 border border-gray-100 dark:border-gray-900">
+                    <Clock size={18} className="text-rose-500 shrink-0" />
+                    <div>
+                      <span className="text-[10px] text-gray-500 block font-medium">დრო</span>
+                      <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                        {selectedTime || 'Evening'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 py-1.5 px-3 rounded-xl bg-white/40 dark:bg-gray-950/30 border border-gray-100 dark:border-gray-900">
+                    <span className="text-xl shrink-0">{getMealEmoji(selectedMeal)}</span>
+                    <div>
+                      <span className="text-[10px] text-gray-500 block font-medium">საჭმლის არჩევანი</span>
+                      <span className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate max-w-[90px]">
+                        {selectedMeal === 'custom' ? customMealText : getMealTitle(selectedMeal)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Interactive CTA buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                {/* Download PDF/Image invitation */}
+                <button
+                  onClick={handleDownloadCertificate}
+                  className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold bg-white/70 dark:bg-gray-950/30 hover:bg-rose-500/10 border border-rose-500/20 text-rose-500 transition-all cursor-pointer flex items-center justify-center gap-2 text-sm shadow-sm active:scale-[0.98]"
+                >
+                  <Download size={16} />
+                  <span>გადმოწერა მიწვევა</span>
+                </button>
+
+                
+              </div>
+
+              <motion.div 
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className="mt-8 text-rose-500 font-serif font-extrabold text-lg block tracking-wide"
+              >
+                მოუთმენლად ველი შეხვედრას ❤️
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+
+      {/* --- FOOTER CREDITS --- */}
+      <footer className="w-full py-4 text-center text-[10px] text-gray-400 dark:text-gray-600 z-10 pointer-events-none select-none">
+        შემუშავებულია სიყვარულით რომანტიკული წყვილებისთვის • დიზაინი: Glassmorphism და Framer Motion
+      </footer>
+    </div>
+  );
+}

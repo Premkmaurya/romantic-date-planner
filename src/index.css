@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif;
+  
+  --color-rose-50: #fff1f2;
+  --color-rose-100: #ffe4e6;
+  --color-rose-200: #fecdd3;
+  --color-rose-300: #fda4af;
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+  --color-rose-700: #be123c;
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(3deg);
+  }
+}
+
+/* Custom CSS Scrollbar & General Utilities */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 63, 94, 0.3) transparent;
+}
+
+/* Glassmorphism helpers */
+.glass-card {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(244, 63, 94, 0.08);
+}
+
+.dark .glass-card {
+  background: rgba(25, 16, 25, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #f43f5e;
+  box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.15);
+}
+
+.dark .glass-input {
+  background: rgba(20, 10, 20, 0.4);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+}
+
+.dark .glass-input:focus {
+  background: rgba(20, 10, 20, 0.7);
+  border-color: #f43f5e;
+  box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.3);
+}
+
+/* Background animated gradient */
+.radial-bg {
+  background: radial-gradient(circle at 20% 20%, #fff5f6 0%, #fff0f3 30%, #fef3f7 70%, #fae8ff 100%);
+}
+
+.dark .radial-bg {
+  background: radial-gradient(circle at 20% 20%, #170d14 0%, #12070e 40%, #0c0208 80%, #150212 100%);
+}
+
+/* Custom cursor trail sparkles */
+.cursor-heart {
+  position: fixed;
+  pointer-events: none;
+  font-size: 1.25rem;
+  z-index: 9999;
+  animation: heartTrail 1s ease-out forwards;
+}
+
+@keyframes heartTrail {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -150%) scale(0) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* Heart Particle Floating Animation */
+@keyframes heartFloatUp {
+  0% {
+    transform: translateY(100vh) scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1.2) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.floating-heart-particle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  bottom: -50px;
+  animation: heartFloatUp 12s linear infinite;
+}
+
+/* React Datepicker Custom Overrides */
+.react-datepicker {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  border-radius: 1.5rem !important;
+  font-family: 'Outfit', system-ui, sans-serif !important;
+  box-shadow: 0 12px 40px -12px rgba(244, 63, 94, 0.15) !important;
+  overflow: hidden;
+  padding: 0.5rem !important;
+}
+
+.dark .react-datepicker {
+  background: rgba(30, 15, 30, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 40px -12px rgba(244, 63, 94, 0.3) !important;
+}
+
+.react-datepicker__header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(244, 63, 94, 0.1) !important;
+  padding-top: 0.75rem !important;
+}
+
+.react-datepicker__current-month {
+  color: #f43f5e !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.dark .react-datepicker__current-month {
+  color: #fb7185 !important;
+}
+
+.react-datepicker__day-name {
+  color: #9c4c5e !important;
+  font-weight: 600 !important;
+  width: 2.2rem !important;
+  line-height: 2.2rem !important;
+}
+
+.dark .react-datepicker__day-name {
+  color: #fca5a5 !important;
+}
+
+.react-datepicker__day {
+  color: #4b5563 !important;
+  width: 2.2rem !important;
+  line-height: 2.2rem !important;
+  margin: 0.15rem !important;
+  border-radius: 9999px !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+}
+
+.dark .react-datepicker__day {
+  color: #e5e7eb !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: rgba(244, 63, 94, 0.15) !important;
+  color: #f43f5e !important;
+}
+
+.dark .react-datepicker__day:hover {
+  background-color: rgba(244, 63, 94, 0.3) !important;
+  color: #fda4af !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background: linear-gradient(135deg, #f43f5e, #db2777) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3) !important;
+}
+
+.react-datepicker__day--disabled {
+  color: #d1d5db !important;
+  opacity: 0.25;
+}
+
+.dark .react-datepicker__day--disabled {
+  color: #4b5563 !important;
+}
+
+.react-datepicker__navigation {
+  top: 1rem !important;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: #f43f5e !important;
+  border-width: 2px 2px 0 0 !important;
+}
+
+/* Custom time input slider and list */
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(48%) sepia(80%) saturate(1900%) hue-rotate(325deg) brightness(97%) contrast(93%);
+  cursor: pointer;
+}
+
+.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(75%) sepia(40%) saturate(1200%) hue-rotate(320deg) brightness(105%) contrast(100%);
+}
