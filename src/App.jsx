@@ -82,6 +82,42 @@ export default function App() {
     isPast: false,
   });
 
+  // --- Preloader States ---
+  const [loading, setLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingText, setLoadingText] = useState("მაგია იხარშება... ✨");
+
+  // --- Preloader Progress Timer ---
+  useEffect(() => {
+    if (loadingProgress < 100) {
+      const timer = setTimeout(() => {
+        setLoadingProgress((prev) => {
+          const next = prev + Math.floor(Math.random() * 8) + 2; // Increment by 2-10%
+          const capped = Math.min(next, 100);
+          
+          if (capped < 25) {
+            setLoadingText("მაგია იხარშება... ✨");
+          } else if (capped < 50) {
+            setLoadingText("ვარსკვლავები სწორდება... 🌟");
+          } else if (capped < 75) {
+            setLoadingText("გულები ემზადება... 💖");
+          } else if (capped < 100) {
+            setLoadingText("სიყვარული იღვრება... ❤️");
+          } else {
+            setLoadingText("მზად არის! 💕");
+          }
+          return capped;
+        });
+      }, 70);
+      return () => clearTimeout(timer);
+    } else {
+      const fadeTimer = setTimeout(() => {
+        setLoading(false);
+      }, 600);
+      return () => clearTimeout(fadeTimer);
+    }
+  }, [loadingProgress]);
+
   // --- Sync State to LocalStorage ---
   useEffect(() => {
     localStorage.setItem("proposal_name", name);
@@ -523,6 +559,68 @@ export default function App() {
     <div className="min-h-screen radial-bg text-gray-800 dark:text-gray-100 flex flex-col justify-between relative overflow-hidden transition-colors duration-500 font-sans">
       <BackgroundParticles />
       <HeartCursorTrail />
+
+      {/* --- PRELOADER --- */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            key="preloader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="fixed inset-0 z-50 radial-bg flex flex-col items-center justify-center text-gray-800 dark:text-gray-100"
+          >
+            <BackgroundParticles />
+            <div className="z-10 flex flex-col items-center text-center px-4">
+              {/* Pulsing Heart */}
+              <motion.div
+                animate={{
+                  scale: [1, 1.15, 1],
+                  filter: [
+                    "drop-shadow(0 0 10px rgba(244, 63, 94, 0.3))",
+                    "drop-shadow(0 0 25px rgba(244, 63, 94, 0.6))",
+                    "drop-shadow(0 0 10px rgba(244, 63, 94, 0.3))",
+                  ],
+                }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="text-6xl sm:text-7xl mb-8 select-none"
+              >
+                ❤️
+              </motion.div>
+
+              {/* Loading Progress */}
+              <h2 className="text-4xl font-extrabold font-serif mb-2 tracking-wide text-rose-500">
+                {loadingProgress}%
+              </h2>
+
+              {/* Loading Bar */}
+              <div className="w-48 sm:w-60 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden mb-4 border border-rose-500/10 shadow-inner">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-rose-400 via-pink-500 to-purple-500"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${loadingProgress}%` }}
+                  transition={{ duration: 0.1 }}
+                />
+              </div>
+
+              {/* Status Text */}
+              <motion.p
+                key={loadingText}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="text-sm font-semibold text-gray-500 dark:text-gray-400 min-h-[20px]"
+              >
+                {loadingText}
+              </motion.p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <HeaderActions
         theme={theme}

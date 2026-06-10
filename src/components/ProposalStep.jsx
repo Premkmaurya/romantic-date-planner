@@ -24,10 +24,10 @@ export default function ProposalStep({ name, handleProposalAccept, noBtnRef, isN
       </motion.div>
 
       <h1 className="text-3xl sm:text-4xl font-extrabold font-serif text-gray-900 dark:text-white mb-3 tracking-wide leading-tight">
-        მოგაწოდებ შეხვედრას{name ? `, ${name}` : ''}? ❤️
+        თანახმა ხარ ჩემთან შეხვედრაზე{name ? `, ${name}` : ''}? ❤️
       </h1>
       <p className="text-gray-600 dark:text-gray-400 font-medium mb-8">
-        მაქვს რაღაც განსაკუთრებული დაგეგმილი ჩვენთვის.
+        მე რაღაც (განსაკუთრებული)მაქვს ჩვენთვის დაგეგმილი, არაფერი განსაკუთრებული
       </p>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative min-h-[60px]">
