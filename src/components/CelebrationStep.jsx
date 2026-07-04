@@ -27,45 +27,45 @@ export default function CelebrationStep({
       </div>
 
       <h1 className="text-3xl sm:text-4xl font-extrabold font-serif text-rose-600 dark:text-rose-400 mb-2 leading-tight">
-        🎉 მოლოცვები!
+        🎉 Congratulations!
       </h1>
       <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-        თქვენ ოფიციალურად დათანხმდით შესახვედრებლად ❤️
+        You have officially agreed to go on a date ❤️
       </h2>
 
       {!countdown.isPast && selectedDate && (
         <div className="mb-6 py-3 px-4 rounded-2xl bg-rose-500/5 dark:bg-rose-900/10 border border-rose-500/10 inline-flex flex-col items-center">
           <span className="text-[10px] uppercase tracking-wider font-extrabold text-rose-500/80 mb-1 flex items-center gap-1">
             <Clock size={10} />
-            <span>გაკრონოლებითი დრო შეხვედრამდე</span>
+            <span>Countdown to the date</span>
           </span>
           <div className="flex gap-3 text-center">
             <div>
               <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
                 {countdown.days}
               </span>
-              <span className="text-[9px] block text-gray-500">დღეები</span>
+              <span className="text-[9px] block text-gray-500">Days</span>
             </div>
             <span className="font-bold text-gray-400">:</span>
             <div>
               <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
                 {countdown.hours.toString().padStart(2, "0")}
               </span>
-              <span className="text-[9px] block text-gray-500">სთ</span>
+              <span className="text-[9px] block text-gray-500">hr</span>
             </div>
             <span className="font-bold text-gray-400">:</span>
             <div>
               <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
                 {countdown.minutes.toString().padStart(2, "0")}
               </span>
-              <span className="text-[9px] block text-gray-500">წთ</span>
+              <span className="text-[9px] block text-gray-500">min</span>
             </div>
             <span className="font-bold text-gray-400">:</span>
             <div>
               <span className="font-extrabold text-lg text-rose-600 dark:text-rose-400">
                 {countdown.seconds.toString().padStart(2, "0")}
               </span>
-              <span className="text-[9px] block text-gray-500">წმ</span>
+              <span className="text-[9px] block text-gray-500">sec</span>
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function CelebrationStep({
       <div className="glass-card border border-rose-500/10 rounded-2xl p-5 mb-6 text-left space-y-4 shadow-sm bg-white/30 dark:bg-gray-950/20">
         <h3 className="font-extrabold text-sm uppercase tracking-wide text-rose-500/90 pl-0.5 flex items-center gap-1.5">
           <Heart size={14} className="fill-current" />
-          <span>მონაცემების დეტალები</span>
+          <span>Date Details</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
@@ -82,7 +82,7 @@ export default function CelebrationStep({
             <CalendarIcon />
             <div>
               <span className="text-[10px] text-gray-500 block font-medium">
-                თარიღი
+                Date
               </span>
               <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
                 {selectedDate
@@ -100,10 +100,10 @@ export default function CelebrationStep({
             <Clock size={18} className="text-rose-500 shrink-0" />
             <div>
               <span className="text-[10px] text-gray-500 block font-medium">
-                დრო
+                Time
               </span>
               <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
-                {selectedTime || "საღამო"}
+                {selectedTime || "Evening"}
               </span>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function CelebrationStep({
             </span>
             <div>
               <span className="text-[10px] text-gray-500 block font-medium">
-                არჩევანი
+                Choice
               </span>
               <span className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate max-w-[90px]">
                 {selectedMeal === "custom"
@@ -134,7 +134,7 @@ export default function CelebrationStep({
           className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold bg-white/70 dark:bg-gray-950/30 hover:bg-rose-500/10 border border-rose-500/20 text-rose-500 transition-all cursor-pointer flex items-center justify-center gap-2 text-sm shadow-sm active:scale-[0.98]"
         >
           <Download size={16} />
-          <span>დააინსტალირეთ მოწვევა</span>
+          <span>Download Invitation</span>
         </button>
       </div>
 
@@ -143,7 +143,7 @@ export default function CelebrationStep({
         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
         className="mt-8 text-rose-500 font-serif font-extrabold text-lg block tracking-wide"
       >
-        აღარ მღერია ❤️
+        Can't wait ❤️
       </motion.div>
     </motion.div>
   );

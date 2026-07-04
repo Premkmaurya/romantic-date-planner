@@ -24,10 +24,10 @@ export default function ProposalStep({ name, handleProposalAccept, noBtnRef, isN
       </motion.div>
 
       <h1 className="text-3xl sm:text-4xl font-extrabold font-serif text-gray-900 dark:text-white mb-3 tracking-wide leading-tight">
-        თანახმა ხარ ჩემთან შეხვედრაზე{name ? `, ${name}` : ''}? ❤️
+        Will you go on a date with me{name ? `, ${name}` : ''}? ❤️
       </h1>
       <p className="text-gray-600 dark:text-gray-400 font-medium mb-8">
-        მე რაღაც (განსაკუთრებული)მაქვს ჩვენთვის დაგეგმილი, არაფერი განსაკუთრებული
+        I have something special planned for us.
       </p>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative min-h-[60px]">
@@ -36,7 +36,7 @@ export default function ProposalStep({ name, handleProposalAccept, noBtnRef, isN
           className="w-full sm:w-auto px-10 py-4 rounded-full font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg shadow-rose-500/20 hover:shadow-xl active:scale-[0.98] hover:scale-[1.03] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
         >
           <Heart size={18} className="fill-current group-hover:scale-125 transition-transform" />
-          <span>დიახ ❤️</span>
+          <span>Yes ❤️</span>
         </button>
 
         <motion.button
@@ -51,7 +51,7 @@ export default function ProposalStep({ name, handleProposalAccept, noBtnRef, isN
           }`}
           style={{ touchAction: 'none' }}
         >
-          {isNoBtnMoved ? tooltipText : "არა 😅"}
+          {isNoBtnMoved ? tooltipText : "No 😅"}
         </motion.button>
       </div>
     </motion.div>

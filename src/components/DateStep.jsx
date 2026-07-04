@@ -21,17 +21,17 @@ export default function DateStep({ selectedDate, setSelectedDate, selectedTime, 
       </div>
 
       <h1 className="text-2xl sm:text-3xl font-bold font-serif text-gray-900 dark:text-white mb-2 leading-tight">
-        ვგეგმავთ ჩვენს თარიღს ❤️
+        Planning our date ❤️
       </h1>
       <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-        აირჩიეთ შესაფერისი დღე და დრო.
+        Choose a suitable day and time.
       </p>
 
       <div className="space-y-5 text-left">
         <div className="space-y-2">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5 pl-1">
             <Calendar size={16} className="text-rose-500" />
-            <span>აირჩიეთ თარიღი</span>
+            <span>Choose date</span>
           </label>
           <div className="relative w-full flex justify-center">
             <DatePicker
@@ -47,15 +47,15 @@ export default function DateStep({ selectedDate, setSelectedDate, selectedTime, 
         <div className="space-y-2">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5 pl-1">
             <Clock size={16} className="text-rose-500" />
-            <span>აირჩიეთ დრო</span>
+            <span>Choose time</span>
           </label>
 
           <div className="grid grid-cols-2 gap-2 mb-2">
             {[
-              { time: '11:30', label: 'ბრანჩი 🥐' },
-              { time: '14:00', label: 'ყავა & ჩილ ☕' },
-              { time: '18:00', label: 'სანთლების სეირნობა 🌅' },
-              { time: '19:30', label: 'ვირტუალური სადილი 🕯️' },
+              { time: '11:30', label: 'Brunch 🥐' },
+              { time: '14:00', label: 'Coffee & Chill ☕' },
+              { time: '18:00', label: 'Sunset Walk 🌅' },
+              { time: '19:30', label: 'Romantic Dinner 🕯️' },
             ].map((slot) => (
               <button
                 key={slot.time}
@@ -89,7 +89,7 @@ export default function DateStep({ selectedDate, setSelectedDate, selectedTime, 
         disabled={!selectedDate || !selectedTime}
         className="w-full mt-7 py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-md hover:shadow-lg shadow-rose-500/20 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-800 dark:disabled:to-gray-950 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
       >
-        <span>გაგრძელება</span>
+        <span>Continue</span>
         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
       </button>
     </motion.div>

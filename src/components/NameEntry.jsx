@@ -19,10 +19,10 @@ export default function NameEntry({ enteredName, setEnteredName, handleNameSubmi
       </div>
 
       <h1 className="text-3xl font-bold font-serif text-gray-900 dark:text-white mb-2 leading-tight">
-        შექმენით თარიღის შეთავაზება
+        Create a Date Proposal
       </h1>
       <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 max-w-sm mx-auto">
-        მოირგეთ ეს ინტერაქტიული მოთხოვნა ვინმესთვის სპეციალური, ან შეიყვანეთ სახელი საკუთარ გამოცდაზე!
+        Customize this interactive proposal for someone special, or enter a name to try it yourself!
       </p>
 
       <form onSubmit={handleNameSubmit} className="space-y-5">
@@ -35,7 +35,7 @@ export default function NameEntry({ enteredName, setEnteredName, handleNameSubmi
             required
             value={enteredName}
             onChange={(e) => setEnteredName(e.target.value)}
-            placeholder="მისი სახელი (მაგ. ჯულიეტა)"
+            placeholder="Their Name (e.g., Juliet)"
             className="w-full py-3.5 pl-11 pr-4 rounded-xl text-base glass-input text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 font-medium"
             aria-label="Special someone's name"
           />
@@ -45,7 +45,7 @@ export default function NameEntry({ enteredName, setEnteredName, handleNameSubmi
           type="submit"
           className="w-full py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-md hover:shadow-lg shadow-rose-500/20 active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
         >
-          <span>ჩაიყალეთ შეთავაზება</span>
+          <span>Launch Proposal</span>
           <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </form>

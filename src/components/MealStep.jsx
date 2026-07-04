@@ -19,20 +19,20 @@ export default function MealStep({ selectedMeal, setSelectedMeal, customMealText
       </div>
 
       <h1 className="text-2xl sm:text-3xl font-bold font-serif text-gray-900 dark:text-white mb-2 leading-tight">
-        რა ვჭამოთ? 🍽️
+        What should we eat? 🍽️
       </h1>
       <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-        აირჩიეთ თქვენი საყვარელი ტიპის საჭმელი.
+        Choose your favorite type of food.
       </p>
 
       <div className="grid grid-cols-2 gap-3.5 text-left mb-5">
         {[
-          { id: 'pizza', icon: '🍕', desc: 'ჩიზი' },
-          { id: 'burger', icon: '🍔', desc: 'კლასიკა' },
-          { id: 'pasta', icon: '🍝', desc: 'იტალიური' },
-          { id: 'sushi', icon: '🍣', desc: 'ფრეში' },
-          { id: 'dessert', icon: '☕🍰', desc: 'ტკბილეული' },
-          { id: 'custom', icon: '❓', desc: 'კასტომი' }
+          { id: 'pizza', icon: '🍕', desc: 'Cheesy' },
+          { id: 'burger', icon: '🍔', desc: 'Classic' },
+          { id: 'pasta', icon: '🍝', desc: 'Italian' },
+          { id: 'sushi', icon: '🍣', desc: 'Fresh' },
+          { id: 'dessert', icon: '☕🍰', desc: 'Sweets' },
+          { id: 'custom', icon: '❓', desc: 'Custom' }
         ].map((item) => (
           <motion.button
             key={item.id}
@@ -72,7 +72,7 @@ export default function MealStep({ selectedMeal, setSelectedMeal, customMealText
             required
             value={customMealText}
             onChange={(e) => setCustomMealText(e.target.value)}
-            placeholder="რას გელით? (მაგ. მექსიკური ტაკოები 🌮)"
+            placeholder="What are you craving? (e.g. Mexican Tacos 🌮)"
             className="w-full py-3.5 px-4 rounded-xl text-sm glass-input text-gray-900 dark:text-white font-medium"
             aria-label="Custom meal choice"
           />
@@ -84,7 +84,7 @@ export default function MealStep({ selectedMeal, setSelectedMeal, customMealText
         disabled={!selectedMeal || (selectedMeal === 'custom' && !customMealText.trim()) || isSendingEmail}
         className="w-full py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-md hover:shadow-lg shadow-rose-500/20 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-800 dark:disabled:to-gray-950 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group text-base"
       >
-        <span>{isSendingEmail ? 'Sending...' : 'გაგრძელება'}</span>
+        <span>{isSendingEmail ? 'Sending...' : 'Continue'}</span>
       </button>
       {emailSendError && (
         <p className="mt-3 text-sm text-red-500">{emailSendError}</p>

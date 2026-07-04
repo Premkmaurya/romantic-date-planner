@@ -56,21 +56,21 @@ export default function App() {
   // --- Fleeing No Button State ---
   const [noBtnPos, setNoBtnPos] = useState({ x: 0, y: 0 });
   const [isNoBtnMoved, setIsNoBtnMoved] = useState(false);
-  const [tooltipText, setTooltipText] = useState("არა 😅");
+  const [tooltipText, setTooltipText] = useState("No 😅");
   const noBtnRef = useRef(null);
   const originRef = useRef(null);
 
   const tooltips = [
-    "ნამდვილად გინდა? 😏",
-    "ცადე თავიდან 😆",
-    "არა ასე სწრაფად ❤️",
-    "მგონი 'კი' იგულისხმე 😄",
-    "არა არჩევანი არ არის! 😜",
-    "გიაზრე კარგად... 🥺",
-    "შეცდომა: პარამეტრი გამორთულია! 🚫",
-    "სწორედ დააჭირე 'კი'! 💖",
-    "კარგი მცდელობა! 😂",
-    "აჰ, მომხსნა! 🏃‍♂️",
+    "Are you sure? 😏",
+    "Try again 😆",
+    "Not so fast ❤️",
+    "I think you meant 'yes' 😄",
+    "No is not an option! 😜",
+    "Think carefully... 🥺",
+    "Error: parameter disabled! 🚫",
+    "Just click 'yes'! 💖",
+    "Nice try! 😂",
+    "Ah, caught me! 🏃‍♂️",
   ];
 
   // --- Countdown Timer State ---
@@ -85,7 +85,7 @@ export default function App() {
   // --- Preloader States ---
   const [loading, setLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingText, setLoadingText] = useState("მაგია იხარშება... ✨");
+  const [loadingText, setLoadingText] = useState("Magic is brewing... ✨");
 
   // --- Preloader Progress Timer ---
   useEffect(() => {
@@ -96,15 +96,15 @@ export default function App() {
           const capped = Math.min(next, 100);
           
           if (capped < 25) {
-            setLoadingText("მაგია იხარშება... ✨");
+            setLoadingText("Magic is brewing... ✨");
           } else if (capped < 50) {
-            setLoadingText("ვარსკვლავები სწორდება... 🌟");
+            setLoadingText("Stars are aligning... 🌟");
           } else if (capped < 75) {
-            setLoadingText("გულები ემზადება... 💖");
+            setLoadingText("Hearts are preparing... 💖");
           } else if (capped < 100) {
-            setLoadingText("სიყვარული იღვრება... ❤️");
+            setLoadingText("Love is pouring... ❤️");
           } else {
-            setLoadingText("მზად არის! 💕");
+            setLoadingText("Ready! 💕");
           }
           return capped;
         });
@@ -439,17 +439,17 @@ export default function App() {
   // --- Generate SVG Certificate and Download ---
   const handleDownloadCertificate = () => {
     audio.playClick();
-    const finalName = name || "ულამაზესი";
-    const timeStr = selectedTime ? selectedTime : "საღამო";
+    const finalName = name || "Beautiful";
+    const timeStr = selectedTime ? selectedTime : "Evening";
 
-    let mealStr = "განსაკუთრებული კვება";
-    if (selectedMeal === "pizza") mealStr = "პიცა 🍕";
-    else if (selectedMeal === "burger") mealStr = "ბურგერი 🍔";
-    else if (selectedMeal === "pasta") mealStr = "პასტა 🍝";
-    else if (selectedMeal === "sushi") mealStr = "სუში 🍣";
-    else if (selectedMeal === "dessert") mealStr = "ყავა და დესერტი ☕🍰";
+    let mealStr = "Special meal";
+    if (selectedMeal === "pizza") mealStr = "Pizza 🍕";
+    else if (selectedMeal === "burger") mealStr = "Burger 🍔";
+    else if (selectedMeal === "pasta") mealStr = "Pasta 🍝";
+    else if (selectedMeal === "sushi") mealStr = "Sushi 🍣";
+    else if (selectedMeal === "dessert") mealStr = "Coffee & Dessert ☕🍰";
     else if (selectedMeal === "custom")
-      mealStr = customMealText || "საკუთარი არჩევანი";
+      mealStr = customMealText || "Own choice";
 
     const svgContent = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
@@ -476,32 +476,32 @@ export default function App() {
         <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(100, 1180)" />
         <path d="M 60 120 C 60 70, 110 60, 120 100 C 130 60, 180 70, 180 120 C 180 170, 120 200, 120 200 C 120 200, 60 170, 60 120 Z" fill="#f43f5e" opacity="0.1" transform="scale(0.4) translate(1680, 1180)" />
 
-        <text x="400" y="110" font-family="'Playfair Display', serif" font-weight="bold" font-size="28" fill="#be123c" text-anchor="middle">პაემნის ოფიციალური მოწვევა</text>
+        <text x="400" y="110" font-family="'Playfair Display', serif" font-weight="bold" font-size="28" fill="#be123c" text-anchor="middle">Official Date Invitation</text>
         <line x1="300" y1="130" x2="500" y2="130" stroke="url(#accentGrad)" stroke-width="2" />
         
         <path d="M 400 210 C 400 190, 420 170, 440 170 C 460 170, 475 185, 475 205 C 475 225, 455 245, 400 280 C 345 245, 325 225, 325 205 C 325 185, 340 170, 360 170 C 380 170, 400 190, 400 210 Z" fill="url(#accentGrad)" filter="url(#shadow)" />
         <text x="400" y="222" font-family="'Outfit', sans-serif" font-weight="bold" font-size="28" fill="white" text-anchor="middle">✓</text>
 
-        <text x="400" y="325" font-family="'Outfit', sans-serif" font-size="18" fill="#4b5563" text-anchor="middle">ეს ადასტურებს, რომ ულამაზესი</text>
-        <text x="400" y="365" font-family="'Playfair Display', serif" font-weight="bold" font-size="34" fill="#e11d48" text-anchor="middle">${finalName}</text>
-        <text x="400" y="405" font-family="'Outfit', sans-serif" font-size="16" fill="#4b5563" text-anchor="middle">ოფიციალურად დათანხმდა წამოსულიყო განსაკუთრებულ პაემანზე.</text>
+        <text x="400" y="325" font-family="'Outfit', sans-serif" font-size="18" fill="#4b5563" text-anchor="middle">This confirms that the beautiful</text>
+        <text x="400" y="365" font-family="'Playfair Display', serif" font-weight="bold" font-size="34" fill="#e11d48" text-anchor="middle">\${finalName}</text>
+        <text x="400" y="405" font-family="'Outfit', sans-serif" font-size="16" fill="#4b5563" text-anchor="middle">has officially agreed to go on a special date.</text>
 
         <rect x="150" y="440" width="500" height="80" rx="15" fill="#fff1f2" stroke="#fecdd3" stroke-width="1" />
         
-        <text x="230" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">თარიღი</text>
-        <text x="230" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${selectedDate ? selectedDate.toLocaleDateString("ka-GE", { month: "short", day: "numeric" }) : "გასარკვევია"}</text>
+        <text x="230" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">Date</text>
+        <text x="230" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">\${selectedDate ? selectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "TBD"}</text>
 
-        <text x="400" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">დრო</text>
-        <text x="400" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${timeStr}</text>
+        <text x="400" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">Time</text>
+        <text x="400" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">\${timeStr}</text>
 
-        <text x="570" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">მენიუ</text>
-        <text x="570" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">${mealStr.replace(/[^\w\s\&\,\.\-\:\/]/g, "").trim() || "კვება"}</text>
+        <text x="570" y="475" font-family="'Outfit', sans-serif" font-weight="bold" font-size="14" fill="#be123c" text-anchor="middle">Menu</text>
+        <text x="570" y="500" font-family="'Outfit', sans-serif" font-size="13" fill="#4b5563" text-anchor="middle">\${mealStr.replace(/[^\\w\\s\\&\\,\\.\\-\\:\\/]/g, "").trim() || "Meal"}</text>
 
         <line x1="150" y1="560" x2="300" y2="560" stroke="#d1d5db" stroke-width="1" />
-        <text x="225" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">მომწვევის ხელმოწერა</text>
+        <text x="225" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">Inviter's Signature</text>
         
         <line x1="500" y1="560" x2="650" y2="560" stroke="#d1d5db" stroke-width="1" />
-        <text x="575" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">${finalName}-ის ხელმოწერა</text>
+        <text x="575" y="575" font-family="'Outfit', sans-serif" font-size="11" fill="#9ca3af" text-anchor="middle">\${finalName}'s Signature</text>
       </svg>
     `;
 
@@ -686,8 +686,7 @@ export default function App() {
       </main>
 
       <footer className="w-full py-4 text-center text-[10px] text-gray-400 dark:text-gray-600 z-10 pointer-events-none select-none">
-        შემუშავებულია სიყვარულით რომანტიკული წყვილებისთვის • დიზაინი:
-        Glassmorphism და Framer Motion
+        Developed with love for romantic couples • Design: Glassmorphism and Framer Motion
       </footer>
     </div>
   );
