@@ -24,7 +24,7 @@ export default function ProposalStep({ name, handleProposalAccept, noBtnRef, isN
       </motion.div>
 
       <h1 className="text-3xl sm:text-4xl font-extrabold font-serif text-gray-900 dark:text-white mb-3 tracking-wide leading-tight">
-        Can you go on a date with Abhi? ❤️
+        Will you ready to travel the world with me? ❤️
       </h1>
       <p className="text-gray-600 dark:text-gray-400 font-medium mb-8">
         I have something special planned for us.
